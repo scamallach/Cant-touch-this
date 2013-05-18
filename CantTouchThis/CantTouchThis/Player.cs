@@ -8,7 +8,7 @@ namespace CantTouchThis
 {
     public class Player
     {
-        public Vector2 Position { get; protected set; }
+        public Vector2 Position { get; set; }
 
         public float Velocity { get; set; }
         public float Direction { get; set; }
@@ -21,7 +21,7 @@ namespace CantTouchThis
             Height = height;
         }
 
-        public void setPos(int x, int y) {
+        public void setPos(float x, float y) {
             Position = new Vector2(x, y);
         }
 

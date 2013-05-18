@@ -24,9 +24,6 @@ namespace CantTouchThis
         Texture2D walk;
         Player player;
 
-        private Vector2 playerPosition;
-
-        private float angle = 0;
         bool invertYaxis = false;
 
         public Game1()
@@ -44,14 +41,13 @@ namespace CantTouchThis
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = 1080;
             graphics.PreferredBackBufferHeight = 720;
             
             graphics.ApplyChanges();
 
             player = new Player(90, 95);//Explicitly set to prototype walk texture params
-            player.Position = new Vector2(50, 50);
+            player.setPos(50, 50);
 
             base.Initialize();
         }
@@ -67,9 +63,15 @@ namespace CantTouchThis
 
             // TODO: use this.Content to load your game content here
             tile = Content.Load<Texture2D>(@"tile");
-            walk = Content.Load<Texture2D>(@"gb_walk2");
 
-            currentLevel = new Level(tile);
+            Texture2D[] tiles = new Texture2D[]
+            {
+                Content.Load<Texture2D>(@"tile"),
+                Content.Load<Texture2D>(@"obstacle")
+            };
+            currentLevel = new Level(tiles);
+
+            walk = Content.Load<Texture2D>(@"gb_walk2");
         }
 
         /// <summary>
@@ -94,8 +96,6 @@ namespace CantTouchThis
             // Read in input from controller
             UpdateInput();
 
-            // TODO: Add your update logic here
-
             base.Update(gameTime);
         }
 
@@ -103,6 +103,10 @@ namespace CantTouchThis
         {
             // Get the game pad state.
             GamePadState currentState = GamePad.GetState(PlayerIndex.One);
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            Vector2 lastPlayerPosition = player.Position;
+
             if (currentState.IsConnected)
             {
                 /* Ship velocity type controls 
@@ -124,18 +128,33 @@ namespace CantTouchThis
                 modelVelocity += modelVelocityAdd;
                 */
 
+                
+
+                // MOVEMENT PROFILES
+                // Binary
+                // NEXT Summation
+
                 float maxSpeed = 0.1f;
                 float changeInAngle = currentState.ThumbSticks.Left.X * maxSpeed;
 
-                // this variable is defined elsewhere
-                player.Direction += changeInAngle;
+                //player.Direction += changeInAngle;
 
 
+                Vector2 direction = new Vector2((float)Math.Cos(changeInAngle),
+                                (float)Math.Sin(changeInAngle));
+                direction.Normalize();
+                player.Position += direction * maxSpeed;
 
-                if (currentState.ThumbSticks.Left.X < 0) playerPosition.X -= 5;
-                if (currentState.ThumbSticks.Left.X > 0) playerPosition.X += 5;
-                if (currentState.ThumbSticks.Left.Y < 0) playerPosition.Y += 5;
-                if (currentState.ThumbSticks.Left.Y > 0) playerPosition.Y -= 5;
+
+                // Weighted
+                /*// Explicit stepped
+                if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
+                if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
+                if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
+                if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
+                */
+
+                // END MOVEMENT PROFILES
 
                 /*
                 // Set vibration feedback
@@ -145,19 +164,42 @@ namespace CantTouchThis
                     //currentState.Triggers.Right);
                 */
 
+
                 /* Reset condition */
                 // Warp back to start with the A button
                 if (currentState.Buttons.A == ButtonState.Pressed)
                 {
-                    playerPosition = new Vector2(50, 50);// Vector2.Zero;
+                    player.setPos(50, 50);// Vector2.Zero;
                     //modelVelocity = Vector3.Zero;
                     //modelRotation = 0.0f;
                 }
 
                 /* Check bounds */
-                if (player.Position.X < 0) player.Position.X = 0;
-                if (player.Position.X > graphics.PreferredBackBufferWidth) player.Position.X = graphics.PreferredBackBufferWidth - player.Width;
+                if (player.Position.X < 0) player.setPos(0, player.Position.Y);
+                if (player.Position.Y < 0) player.setPos(player.Position.X, 0);
+                if (player.Position.X > graphics.PreferredBackBufferWidth - player.Width) player.setPos(graphics.PreferredBackBufferWidth - player.Width, player.Position.Y);
+                if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
  
+            }
+            else
+            {
+                if (keyboardState.IsKeyDown(Keys.Left)) player.setPos(player.Position.X - 5, player.Position.Y);
+                if (keyboardState.IsKeyDown(Keys.Right)) player.setPos(player.Position.X + 5, player.Position.Y);
+                if (keyboardState.IsKeyDown(Keys.Down)) player.setPos(player.Position.X, player.Position.Y + 5);
+                if (keyboardState.IsKeyDown(Keys.Up)) player.setPos(player.Position.X, player.Position.Y - 5);
+
+                if (keyboardState.IsKeyDown(Keys.Space))
+                {
+                    player.setPos(50, 50);
+                }
+            }
+
+            // Check for collisions
+            Rectangle playerRect = new Rectangle((int)player.Position.X, (int)player.Position.Y, 90, 95);
+            Rectangle? collision = currentLevel.CheckCollision(playerRect);
+            if (collision.HasValue)
+            {
+                player.Position = lastPlayerPosition;
             }
         }
 
@@ -172,9 +214,9 @@ namespace CantTouchThis
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
+            currentLevel.Draw(spriteBatch, gameTime);
 
-            //currentLevel.Draw(spriteBatch, gameTime);
-            spriteBatch.Draw(walk, playerPosition, new Rectangle(5, 36, 90, 95), Color.White);
+            spriteBatch.Draw(walk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
 
             spriteBatch.End();
 
