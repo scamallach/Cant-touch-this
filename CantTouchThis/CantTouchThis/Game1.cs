@@ -25,6 +25,8 @@ namespace CantTouchThis
         Texture2D tile;
         Player player;
 
+        Texture2D lastSceneTexture;
+
         bool invertYaxis = false;
 
         public Game1()
@@ -108,6 +110,8 @@ namespace CantTouchThis
                 Content.Load<Texture2D>(@"wobble front"),
                 Content.Load<Texture2D>(@"wobble back"));
 
+            lastSceneTexture = Content.Load<Texture2D>(@"last scene");
+
 
             //walk = Content.Load<Texture2D>(@"walk_back_colour");
             //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
@@ -174,10 +178,14 @@ namespace CantTouchThis
                 {
                     player.Position += new Vector2(movementVector.X, 0);
 
-                    if(player.Position.Y > (graphics.GraphicsDevice.Viewport.Height / 2))
+                    if (player.Position.Y > (graphics.GraphicsDevice.Viewport.Height / 2))
                         player.Position += new Vector2(0, movementVector.Y);
                     else
+                    {
                         currentLevel.transform += new Vector2(0, movementVector.Y);
+                        if (currentLevel.transform.Y < -300)
+                            Win();
+                    }
                     //Apply vector for bounceback
 
                     currentLevel.transform += new Vector2(0, movementVector.Y);
@@ -265,6 +273,11 @@ namespace CantTouchThis
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void Win()
+        {
+
         }
     }
 }
