@@ -13,7 +13,8 @@ namespace CantTouchThis
         public static float MIN_CONTROL_SPEED = 0.1f;
         public static float MAX_CONTROL_SPEED = 0.4f;
 
-        public static int WOBBLE_DURATION = 1000;
+        public static int WOBBLE_DURATION = 650;
+        public static int REFRESH_INTERVAL = 200;
 
         //TODO Fix initial null
         private Vector2 _Position;
@@ -35,16 +36,38 @@ namespace CantTouchThis
 
         public List<Item> leftStack;
         public List<Item> rightStack;
-
         public float LeftControl { get; set; }
         public float RightControl { get; set; }
 
-        public Texture2D CurrentWalk { get; protected set; }
+        protected bool refreshIntervalPassed = false;
+        protected int refreshInterval { get; set; }
+        
+        public bool isMoving { get; set; }
+        public bool facingUp { get; set; }
+        /* true if wobbling, false if not
+         */
+        public bool Wobble { get; protected set; }
+        protected int wobbleTimeout { get; set; }
+
+        public Texture2D CurrentWalk
+        {
+            get
+            {
+                if (this.Wobble)
+                {
+                    if (this.facingUp) return BackWobble; else return FrontWobble;
+                }
+                else
+                {
+                    if (this.facingUp) return BackWalk; else return FrontWalk;
+                }
+            }
+        }
         protected Texture2D FrontWalk { get; set; }
         protected Texture2D BackWalk { get; set; }
         protected Texture2D FrontWobble { get; set; }
         protected Texture2D BackWobble { get; set; }
-
+        
         protected int MaxFrames { get; set; }
         private int _CurrentFrame;
         protected int CurrentFrame
@@ -56,13 +79,6 @@ namespace CantTouchThis
             }
         }
         
-        
-        protected bool refreshIntervalPassed = false;
-        protected int refreshInterval { get; set; }
-        protected int wobbleTimeout { get; set; }
-
-        public bool isMoving { get; set; }
-        public bool facingUp { get; set; }
 
         public Player(int width, int height)
         {
@@ -84,12 +100,14 @@ namespace CantTouchThis
             FrontWobble = frontWobble;
             BackWobble = backWobble;
 
-            CurrentWalk = FrontWalk;
+            //CurrentWalk = FrontWalk;
         }
 
         public void RegisterMovement(GameTime gameTime)
         {
-            Vector2 diff = LastPlayerPosition - Position;
+            //Vector2 diff = LastPlayerPosition - Position;
+            wobbleTimeout -= gameTime.ElapsedGameTime.Milliseconds;
+
             if (isMoving)
             {
                 refreshInterval += gameTime.ElapsedGameTime.Milliseconds;
@@ -100,7 +118,7 @@ namespace CantTouchThis
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             //refreshInterval += gameTime.ElapsedGameTime.Milliseconds; //Now done elsewhere
-            if (refreshInterval > 300)
+            if (refreshInterval > REFRESH_INTERVAL)
             {
                 refreshInterval = 0;
                 refreshIntervalPassed = true;
@@ -108,11 +126,18 @@ namespace CantTouchThis
 
             if (refreshIntervalPassed)
             {
+                //Increment frame
                 CurrentFrame++;
+                
+                //Update Orientation
+                //if (facingUp) CurrentWalk = BackWalk; else CurrentWalk = FrontWalk;
+
+                //Update wobble status
                 if (wobbleTimeout <= 0)
                 {
-                    if (CurrentWalk == FrontWobble) CurrentWalk = FrontWalk;
-                    if (CurrentWalk == BackWobble) CurrentWalk = BackWalk; 
+                    Wobble = false;
+                    //if (CurrentWalk == FrontWobble) CurrentWalk = FrontWalk;
+                    //if (CurrentWalk == BackWobble) CurrentWalk = BackWalk; 
                 }
             }
             refreshIntervalPassed = false;
@@ -124,8 +149,9 @@ namespace CantTouchThis
 
         public void causeWobble()
         {
-            if (CurrentWalk == FrontWalk) CurrentWalk = FrontWobble;
-            if (CurrentWalk == BackWalk) CurrentWalk = BackWobble;
+            //if (CurrentWalk == FrontWalk) CurrentWalk = FrontWobble;
+            //if (CurrentWalk == BackWalk) CurrentWalk = BackWobble;
+            Wobble = true;
             wobbleTimeout = WOBBLE_DURATION;
         }
 
