@@ -19,6 +19,8 @@ namespace CantTouchThis
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Texture2D tile;
+
         public Game1()
             : base()
         {
@@ -35,6 +37,7 @@ namespace CantTouchThis
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            graphics.IsFullScreen = true;
 
             base.Initialize();
         }
@@ -49,6 +52,7 @@ namespace CantTouchThis
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            tile = Content.Load<Texture2D>(@"tile");
         }
 
         /// <summary>
@@ -84,6 +88,9 @@ namespace CantTouchThis
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            spriteBatch.Draw(tile, new Vector2(20, 20), Color.White);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
