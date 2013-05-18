@@ -129,57 +129,18 @@ namespace CantTouchThis
                 if (currentState.ThumbSticks.Right != Vector2.Zero)
                 {
                     Vector2 movementVector = currentState.ThumbSticks.Right;
-                    // Y-Axis is inverted by default, correct if necessary
-                    if (!invertYaxis) movementVector.Y *= -1;
+                    if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
                     player.Position += movementVector * correctionRight;
                 }
 
-                /*
-                float maxSpeed = 0.1f;
-                float changeInAngle = currentState.ThumbSticks.Left.X * maxSpeed;
 
-                //player.Direction += changeInAngle;
-                
-
-                Vector2 direction = new Vector2((float)Math.Cos(changeInAngle),
-                                (float)Math.Sin(changeInAngle));
-                direction.Normalize();
-                player.Position += direction * maxSpeed;
-                
-
-                // Weighted
-                // Explicit stepped
-                if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
-                if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
-                if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
-                if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
-                /*
-                // Acceleration stepped
-                if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
-                if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
-
-                if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
-                if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
-                */
-
-                // END MOVEMENT PROFILES
-
-                /*
-                // Set vibration feedback
-                GamePad.SetVibration(PlayerIndex.One,
-                    1.0f, 1.0f);
-                    //currentState.Triggers.Right,
-                    //currentState.Triggers.Right);
-                */
 
 
                 /* Reset condition */
                 // Warp back to start with the A button
                 if (currentState.Buttons.A == ButtonState.Pressed)
                 {
-                    player.setPos(50, 50);// Vector2.Zero;
-                    //modelVelocity = Vector3.Zero;
-                    //modelRotation = 0.0f;
+                    player.setPos(50, 50);
                 }
 
                 /* Check bounds */
@@ -189,6 +150,7 @@ namespace CantTouchThis
                 if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
  
             }
+            /* Keyboard controls */
             else
             {
                 if (keyboardState.IsKeyDown(Keys.Left)) player.setPos(player.Position.X - 5, player.Position.Y);
@@ -219,7 +181,6 @@ namespace CantTouchThis
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
 
             currentLevel.Draw(spriteBatch, gameTime);
