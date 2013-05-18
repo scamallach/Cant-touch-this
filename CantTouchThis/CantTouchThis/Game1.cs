@@ -60,7 +60,12 @@ namespace CantTouchThis
 
             // TODO: use this.Content to load your game content here
             tile = Content.Load<Texture2D>(@"tile");
-            currentLevel = new Level(tile);
+            Texture2D[] tiles = new Texture2D[]
+            {
+                Content.Load<Texture2D>(@"tile"),
+                Content.Load<Texture2D>(@"obstacle")
+            };
+            currentLevel = new Level(tiles);
         }
 
         /// <summary>
