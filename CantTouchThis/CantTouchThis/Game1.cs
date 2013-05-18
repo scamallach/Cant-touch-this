@@ -21,13 +21,15 @@ namespace CantTouchThis
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Level currentLevel;
-
+        Texture2D stscreen;
         Texture2D tile;
         Player player;
 
         Texture2D lastSceneTexture;
 
         bool invertYaxis = false;
+
+        public bool StartScreen { get; set; }
 
         public Game1()
             : base()
@@ -45,7 +47,9 @@ namespace CantTouchThis
         protected override void Initialize()
         {
             this.IsFixedTimeStep = false;
-            
+
+            StartScreen = true;
+
             graphics.PreferredBackBufferWidth = 1080;
             graphics.PreferredBackBufferHeight = 720;
             
@@ -73,6 +77,7 @@ namespace CantTouchThis
 
             // TODO: use this.Content to load your game content here
             tile = Content.Load<Texture2D>(@"tile");
+            stscreen = Content.Load<Texture2D>(@"First scene");
 
             Texture2D[] tiles = new Texture2D[]
             {
@@ -107,8 +112,8 @@ namespace CantTouchThis
 
             player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour"),
                 Content.Load<Texture2D>(@"walk_back_colour"),
-                Content.Load<Texture2D>(@"wobble front"),
-                Content.Load<Texture2D>(@"wobble back"));
+                Content.Load<Texture2D>(@"wobble_front_colour2"),
+                Content.Load<Texture2D>(@"wobble back2"));
 
             lastSceneTexture = Content.Load<Texture2D>(@"last scene");
 
@@ -136,9 +141,18 @@ namespace CantTouchThis
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // Read in input from controller
-            UpdateInput(gameTime);
+            if (StartScreen)
+            {
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Start == ButtonState.Pressed)
+                    StartScreen = false;
+                //display startscreen 
 
+            }
+            else
+            {
+                // Read in input from controller
+                UpdateInput(gameTime);
+            }
             base.Update(gameTime);
         }
 
@@ -172,7 +186,10 @@ namespace CantTouchThis
                 Vector2 newPos = player.Position + movementVector;
                 Rectangle playerRect = new Rectangle((int)newPos.X, (int)newPos.Y, 93, 80);
                 Rectangle? collision = currentLevel.CheckCollision(playerRect);
-                if (collision != null) player.causeWobble();
+                if (collision != null) {
+                    player.causeWobble();
+                    player.DropItem();
+                }
 
                 if(!collision.HasValue)
                 {
@@ -263,13 +280,18 @@ namespace CantTouchThis
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
+            if (StartScreen)
+            { //draw startscreen
+                spriteBatch.Draw(stscreen, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+            }
+            else
+            {
+                currentLevel.Draw(spriteBatch, gameTime);
 
-            currentLevel.Draw(spriteBatch, gameTime);
-
-            //TODO fix these sprite frame coords
-            player.Draw(spriteBatch, gameTime);
-            //spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
-
+                //TODO fix these sprite frame coords
+                player.Draw(spriteBatch, gameTime);
+                //spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
