@@ -61,6 +61,9 @@ namespace CantTouchThis
         protected int refreshInterval { get; set; }
         protected int wobbleTimeout { get; set; }
 
+        public bool isMoving { get; set; }
+        public bool facingUp { get; set; }
+
         public Player(int width, int height)
         {
             Width = width;
@@ -87,7 +90,7 @@ namespace CantTouchThis
         public void RegisterMovement(GameTime gameTime)
         {
             Vector2 diff = LastPlayerPosition - Position;
-            if (diff != Vector2.Zero)
+            if (isMoving)
             {
                 refreshInterval += gameTime.ElapsedGameTime.Milliseconds;
                 //TODO and check what direction player is facing, modify Walk

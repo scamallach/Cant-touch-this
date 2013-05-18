@@ -172,6 +172,11 @@ namespace CantTouchThis
                 {
                     player.Position += new Vector2(movementVector.X, 0);
                     currentLevel.transform += new Vector2(0, movementVector.Y);
+
+                    player.isMoving = (movementVector != Vector2.Zero);
+
+                    if (movementVector.Y < 0) player.facingUp = true;
+                    if (movementVector.Y > 0) player.facingUp = false;
                 }
 
                 HandleItemCollisions(playerRect);
