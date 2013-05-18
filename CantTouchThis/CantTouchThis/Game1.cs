@@ -20,6 +20,7 @@ namespace CantTouchThis
         SpriteBatch spriteBatch;
 
         Texture2D tile;
+        private Vector2 playerPosition;
 
         public Game1()
             : base()
@@ -38,6 +39,7 @@ namespace CantTouchThis
         {
             // TODO: Add your initialization logic here
             graphics.IsFullScreen = true;
+            playerPosition = new Vector2(50,50);
 
             base.Initialize();
         }
@@ -74,11 +76,34 @@ namespace CantTouchThis
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // Read in input from controller
+            UpdateInput();
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
 
+        protected void UpdateInput()
+        {
+            // Get the game pad state.
+            GamePadState currentState = GamePad.GetState(PlayerIndex.One);
+            if (currentState.IsConnected)
+            {
+
+                if (currentState.ThumbSticks.Left.X < 0) playerPosition.X -= 5;
+                if (currentState.ThumbSticks.Left.X > 0) playerPosition.X += 5;
+                if (currentState.ThumbSticks.Left.Y < 0) playerPosition.Y -= 5;
+                if (currentState.ThumbSticks.Left.Y > 0) playerPosition.Y += 5;
+
+
+                // Warp back to start with the A button
+                if (currentState.Buttons.A == ButtonState.Pressed)
+                {
+                    playerPosition = new Vector2(50, 50);// Vector2.Zero;
+                }
+            }
+        }
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -89,7 +114,9 @@ namespace CantTouchThis
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            spriteBatch.Draw(tile, new Vector2(20, 20), Color.White);
+
+            spriteBatch.Draw(tile, playerPosition, Color.White);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
