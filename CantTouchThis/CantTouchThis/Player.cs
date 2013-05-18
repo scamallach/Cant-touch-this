@@ -161,6 +161,36 @@ namespace CantTouchThis
 
         public void AddItem(Item item)
         {
+            //Check whether picked up by L or R scientist
+            ////for now randomly choose
+            int side = Game1.r.Next(1, 2);
+
+            //Add item to corresponding stack
+            if (side == 1)
+            {
+                leftStack.Add(item);
+            }
+            else
+                rightStack.Add(item);
+
+            //If stack full then stop?
+        }
+
+        public void DropItem()
+        {
+            //Check whether picked up by L or R scientist
+            ////for now randomly choose
+            int side = Game1.r.Next(1, 2);
+
+            //Add item to corresponding stack
+            if (side == 1 && leftStack.Count != 0)
+            {
+                leftStack.RemoveAt(0);
+            }
+            else if (rightStack.Count != 0)
+                rightStack.RemoveAt(0);
+
+            //If stack full then stop?
         }
 
         public void balancePlayer()
@@ -176,7 +206,7 @@ namespace CantTouchThis
             int leftwgt = leftStack.Count;
             int rightwgt = rightStack.Count;
 
-            /* Test only */
+            /* Test only 
             leftwgt = 2;
             rightwgt = 5;
             /* end test only */
