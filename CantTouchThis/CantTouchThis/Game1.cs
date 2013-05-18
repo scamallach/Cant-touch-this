@@ -118,13 +118,12 @@ namespace CantTouchThis
             if (currentState.IsConnected)
             {
 
+                // Update player's weight/speed balance
+                player.balancePlayer();
 
-                float velLeft = 0.1f;
-                float velRight = 0.3f;
-
-                float correctionLeft = velLeft * gameTime.ElapsedGameTime.Milliseconds;
-                float correctionRight = velRight * gameTime.ElapsedGameTime.Milliseconds;
-
+                // Seed input controls with current weight/speed balance
+                float correctionLeft = player.LeftControl * gameTime.ElapsedGameTime.Milliseconds;
+                float correctionRight = player.RightControl * gameTime.ElapsedGameTime.Milliseconds;
 
                 if (currentState.ThumbSticks.Right != Vector2.Zero)
                 {
