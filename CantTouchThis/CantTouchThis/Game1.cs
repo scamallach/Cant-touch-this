@@ -75,8 +75,8 @@ namespace CantTouchThis
 
             player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour"),
                 Content.Load<Texture2D>(@"walk_back_colour"),
-                Content.Load<Texture2D>(@"walk_front_colour"),
-                Content.Load<Texture2D>(@"walk_back_colour"));
+                Content.Load<Texture2D>(@"wobble front"),
+                Content.Load<Texture2D>(@"wobble back"));
 
             //walk = Content.Load<Texture2D>(@"walk_back_colour");
             //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
@@ -224,7 +224,8 @@ namespace CantTouchThis
 
             currentLevel.Draw(spriteBatch, gameTime);
 
-            spriteBatch.Draw(walk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+            //TODO fix these sprite frame coords
+            spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
 
             spriteBatch.End();
 
