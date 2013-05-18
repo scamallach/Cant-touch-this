@@ -167,10 +167,13 @@ namespace CantTouchThis
                 Vector2 newPos = player.Position + movementVector;
                 Rectangle playerRect = new Rectangle((int)newPos.X, (int)newPos.Y, 93, 80);
                 Rectangle? collision = currentLevel.CheckCollision(playerRect);
+                if (collision != null) player.causeWobble();
 
                 if(!collision.HasValue)
                 {
                     player.Position += new Vector2(movementVector.X, 0);
+                    //Apply vector for bounceback
+
                     currentLevel.transform += new Vector2(0, movementVector.Y);
 
                     player.isMoving = (movementVector != Vector2.Zero);
