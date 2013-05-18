@@ -41,12 +41,14 @@ namespace CantTouchThis
         /// </summary>
         protected override void Initialize()
         {
+            this.IsFixedTimeStep = false;
+            
             graphics.PreferredBackBufferWidth = 1080;
             graphics.PreferredBackBufferHeight = 720;
             
             graphics.ApplyChanges();
 
-            player = new Player(90, 95);//Explicitly set to prototype walk texture params
+            player = new Player(93, 80); //Explicitly set to prototype walk texture params
             player.setPos(50, 50);
 
             base.Initialize();
@@ -71,7 +73,13 @@ namespace CantTouchThis
             };
             currentLevel = new Level(tiles);
 
-            walk = Content.Load<Texture2D>(@"gb_walk2");
+            player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour"),
+                Content.Load<Texture2D>(@"walk_back_colour"),
+                Content.Load<Texture2D>(@"walk_front_colour"),
+                Content.Load<Texture2D>(@"walk_back_colour"));
+
+            //walk = Content.Load<Texture2D>(@"walk_back_colour");
+            //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
         }
 
         /// <summary>
@@ -94,12 +102,12 @@ namespace CantTouchThis
                 Exit();
 
             // Read in input from controller
-            UpdateInput();
+            UpdateInput(gameTime);
 
             base.Update(gameTime);
         }
 
-        protected void UpdateInput()
+        protected void UpdateInput(GameTime gameTime)
         {
             // Get the game pad state.
             GamePadState currentState = GamePad.GetState(PlayerIndex.One);
@@ -109,57 +117,50 @@ namespace CantTouchThis
 
             if (currentState.IsConnected)
             {
-                /* Ship velocity type controls 
-                // Rotate the model using the left thumbstick, and scale it down
-                modelRotation -= currentState.ThumbSticks.Left.X * 0.10f;
 
-                // Create some velocity if the right trigger is down.
-                Vector3 modelVelocityAdd = Vector3.Zero;
 
-                // Find out what direction we should be thrusting, 
-                // using rotation.
-                modelVelocityAdd.X = -(float)Math.Sin(modelRotation);
-                modelVelocityAdd.Z = -(float)Math.Cos(modelRotation);
+                float velLeft = 0.1f;
+                float velRight = 0.3f;
 
-                // Now scale our direction by how hard the trigger is down.
-                modelVelocityAdd *= currentState.Triggers.Right;
+                float correctionLeft = velLeft * gameTime.ElapsedGameTime.Milliseconds;
+                float correctionRight = velRight * gameTime.ElapsedGameTime.Milliseconds;
 
-                // Finally, add this vector to our velocity.
-                modelVelocity += modelVelocityAdd;
-                */
 
-                
+                if (currentState.ThumbSticks.Right != Vector2.Zero)
+                {
+                    Vector2 movementVector = currentState.ThumbSticks.Right;
+                    // Y-Axis is inverted by default, correct if necessary
+                    if (!invertYaxis) movementVector.Y *= -1;
+                    player.Position += movementVector * correctionRight;
+                }
 
-                // MOVEMENT PROFILES
-                // Binary
-                // NEXT Summation
                 /*
                 float maxSpeed = 0.1f;
                 float changeInAngle = currentState.ThumbSticks.Left.X * maxSpeed;
 
                 //player.Direction += changeInAngle;
-
+                
 
                 Vector2 direction = new Vector2((float)Math.Cos(changeInAngle),
                                 (float)Math.Sin(changeInAngle));
                 direction.Normalize();
                 player.Position += direction * maxSpeed;
-                */
+                
 
                 // Weighted
-                /*// Explicit stepped
+                // Explicit stepped
                 if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
                 if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
                 if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
                 if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
-                */
+                /*
                 // Acceleration stepped
                 if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
                 if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
 
                 if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
                 if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
-                
+                */
 
                 // END MOVEMENT PROFILES
 
