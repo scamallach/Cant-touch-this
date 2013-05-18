@@ -22,7 +22,10 @@ namespace CantTouchThis
 
         Texture2D tile;
         Texture2D walk;
+        Player player;
+
         private Vector2 playerPosition;
+
         private float angle = 0;
         bool invertYaxis = false;
 
@@ -47,7 +50,8 @@ namespace CantTouchThis
             
             graphics.ApplyChanges();
 
-            playerPosition = new Vector2(50, 50);
+            player = new Player(90, 95);//Explicitly set to prototype walk texture params
+            player.Position = new Vector2(50, 50);
 
             base.Initialize();
         }
@@ -124,8 +128,7 @@ namespace CantTouchThis
                 float changeInAngle = currentState.ThumbSticks.Left.X * maxSpeed;
 
                 // this variable is defined elsewhere
-                angle += changeInAngle;
-
+                player.Direction += changeInAngle;
 
 
 
@@ -134,11 +137,15 @@ namespace CantTouchThis
                 if (currentState.ThumbSticks.Left.Y < 0) playerPosition.Y += 5;
                 if (currentState.ThumbSticks.Left.Y > 0) playerPosition.Y -= 5;
 
+                /*
+                // Set vibration feedback
                 GamePad.SetVibration(PlayerIndex.One,
                     1.0f, 1.0f);
                     //currentState.Triggers.Right,
                     //currentState.Triggers.Right);
+                */
 
+                /* Reset condition */
                 // Warp back to start with the A button
                 if (currentState.Buttons.A == ButtonState.Pressed)
                 {
@@ -146,6 +153,11 @@ namespace CantTouchThis
                     //modelVelocity = Vector3.Zero;
                     //modelRotation = 0.0f;
                 }
+
+                /* Check bounds */
+                if (player.Position.X < 0) player.Position.X = 0;
+                if (player.Position.X > graphics.PreferredBackBufferWidth) player.Position.X = graphics.PreferredBackBufferWidth - player.Width;
+ 
             }
         }
 
