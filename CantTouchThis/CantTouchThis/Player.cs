@@ -15,6 +15,9 @@ namespace CantTouchThis
         public int Width;
         public int Height;
 
+        public List<Item> leftStack;
+        public List<Item> rightStack;
+
         public Player(int width, int height)
         {
             Width = width;
