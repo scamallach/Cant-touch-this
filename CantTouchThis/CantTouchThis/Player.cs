@@ -89,24 +89,7 @@ namespace CantTouchThis
             }
             else
             {
-                /* Weighted and scaled, with one side having a min speed and the other a varyingly different one
-                float difference = (float)(
-                    ((Math.Abs(leftStack.Count - rightStack.Count) / Math.Max(leftStack.Count, rightStack.Count))
-                    * MAX_CONTROL_SPEED)
-                    + MIN_CONTROL_SPEED);
-
-                if (leftStack.Count >= rightStack.Count)
-                {
-                    LeftControl = difference;
-                    RightControl = MIN_CONTROL_SPEED;
-                }
-                else
-                {
-                    LeftControl = MIN_CONTROL_SPEED;
-                    RightControl = difference;
-                }*/
-
-                /* Difference is scaled 0-1 */
+                /* Difference is scaled  */
                 float difference = (float)(
                     ((float)Math.Abs(leftwgt - rightwgt) / Math.Max(leftwgt, rightwgt)) 
                     /2.2);
