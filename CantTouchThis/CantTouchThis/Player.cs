@@ -108,6 +108,14 @@ namespace CantTouchThis
             }
 
         }
+
+        public void RandomJumps()
+        {
+            float[] seeds = new float[] { 0, 0, 0, 0, 0, 0, 0.1f, 0.1f, 0.1f, 0.3f, 0.3f, 0.5f };
+            //Random r = new Random();
+            LeftControl += LeftControl * (float)seeds[Game1.r.Next(0, seeds.Length-1)];
+            RightControl += RightControl * (float)seeds[Game1.r.Next(0, seeds.Length-1)];
+
         }
     }
 }
