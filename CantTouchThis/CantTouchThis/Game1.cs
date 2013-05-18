@@ -40,6 +40,10 @@ namespace CantTouchThis
             // TODO: Add your initialization logic here
             graphics.PreferredBackBufferWidth = 1080;
             graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
+
+            if (!graphics.IsFullScreen)
+                graphics.ToggleFullScreen();
 
             base.Initialize();
         }
