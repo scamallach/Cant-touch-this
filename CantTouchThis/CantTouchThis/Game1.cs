@@ -18,6 +18,7 @@ namespace CantTouchThis
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Level currentLevel;
 
         Texture2D tile;
 
@@ -37,7 +38,8 @@ namespace CantTouchThis
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = 1080;
+            graphics.PreferredBackBufferHeight = 720;
 
             base.Initialize();
         }
@@ -53,6 +55,7 @@ namespace CantTouchThis
 
             // TODO: use this.Content to load your game content here
             tile = Content.Load<Texture2D>(@"tile");
+            currentLevel = new Level(tile);
         }
 
         /// <summary>
@@ -89,7 +92,7 @@ namespace CantTouchThis
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            spriteBatch.Draw(tile, new Vector2(20, 20), Color.White);
+            currentLevel.Draw(spriteBatch, gameTime);
             spriteBatch.End();
 
             base.Draw(gameTime);
