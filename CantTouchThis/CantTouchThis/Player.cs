@@ -9,7 +9,7 @@ namespace CantTouchThis
 {
     public class Player
     {
-        public static float INITIAL_CONTROL_SPEED = 0.2f;
+        public static float INITIAL_CONTROL_SPEED = 0.3f;
         public static float MIN_CONTROL_SPEED = 0.1f;
         public static float MAX_CONTROL_SPEED = 0.4f;
 
@@ -68,13 +68,24 @@ namespace CantTouchThis
 
             // Find each weight from 0 to 4, add 1 always
             //eg: float result = (float)((Math.Abs(1 - 3) / 3) * 0.4) + 0.1f;
-            if (leftStack.Count == 0 && rightStack.Count == 0)
+            int leftwgt = leftStack.Count;
+            int rightwgt = rightStack.Count;
+
+            /* Test only */
+            leftwgt = 2;
+            rightwgt = 5;
+            /* end test only */
+
+
+
+            if (leftwgt == 0 && rightwgt == 0)
             {
-                LeftControl = MIN_CONTROL_SPEED;
-                RightControl = MIN_CONTROL_SPEED;
+                LeftControl = INITIAL_CONTROL_SPEED;
+                RightControl = INITIAL_CONTROL_SPEED;
             }
             else
             {
+                /* Weighted and scaled, with one side having a min speed and the other a varyingly different one
                 float difference = (float)(
                     ((Math.Abs(leftStack.Count - rightStack.Count) / Math.Max(leftStack.Count, rightStack.Count))
                     * MAX_CONTROL_SPEED)
@@ -89,6 +100,23 @@ namespace CantTouchThis
                 {
                     LeftControl = MIN_CONTROL_SPEED;
                     RightControl = difference;
+                }*/
+
+                /* Difference is scaled 0-1 */
+                float difference = (float)(
+                    ((float)Math.Abs(leftwgt - rightwgt) / Math.Max(leftwgt, rightwgt)) 
+                    /2.2);
+
+
+                if (leftwgt >= rightwgt)
+                {
+                    LeftControl = INITIAL_CONTROL_SPEED + difference;
+                    RightControl = INITIAL_CONTROL_SPEED - difference;
+                }
+                else
+                {
+                    LeftControl = INITIAL_CONTROL_SPEED - difference;
+                    RightControl = INITIAL_CONTROL_SPEED + difference;
                 }
             }
         }
