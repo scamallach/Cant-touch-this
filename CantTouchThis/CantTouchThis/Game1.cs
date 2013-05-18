@@ -133,7 +133,7 @@ namespace CantTouchThis
                 // MOVEMENT PROFILES
                 // Binary
                 // NEXT Summation
-
+                /*
                 float maxSpeed = 0.1f;
                 float changeInAngle = currentState.ThumbSticks.Left.X * maxSpeed;
 
@@ -144,7 +144,7 @@ namespace CantTouchThis
                                 (float)Math.Sin(changeInAngle));
                 direction.Normalize();
                 player.Position += direction * maxSpeed;
-
+                */
 
                 // Weighted
                 /*// Explicit stepped
@@ -153,6 +153,13 @@ namespace CantTouchThis
                 if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
                 if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
                 */
+                // Acceleration stepped
+                if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
+                if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
+
+                if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
+                if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
+                
 
                 // END MOVEMENT PROFILES
 
