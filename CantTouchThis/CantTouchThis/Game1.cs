@@ -125,6 +125,12 @@ namespace CantTouchThis
                 float correctionLeft = player.LeftControl * gameTime.ElapsedGameTime.Milliseconds;
                 float correctionRight = player.RightControl * gameTime.ElapsedGameTime.Milliseconds;
 
+                if (currentState.ThumbSticks.Left != Vector2.Zero)
+                {
+                    Vector2 movementVector = currentState.ThumbSticks.Left;
+                    if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
+                    player.Position += movementVector * correctionLeft;
+                }
                 if (currentState.ThumbSticks.Right != Vector2.Zero)
                 {
                     Vector2 movementVector = currentState.ThumbSticks.Right;
@@ -140,6 +146,7 @@ namespace CantTouchThis
                 if (currentState.Buttons.A == ButtonState.Pressed)
                 {
                     player.setPos(50, 50);
+
                 }
 
                 /* Check bounds */
