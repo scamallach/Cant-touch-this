@@ -28,5 +28,8 @@ namespace CantTouchThis
             Position = new Vector2(x, y);
         }
 
+        public void AddItem(Item item)
+        {
+        }
     }
 }
