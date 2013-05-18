@@ -82,7 +82,7 @@ namespace CantTouchThis
 
 
 
-            if (leftwgt == 0 && rightwgt == 0)
+            if (leftwgt == rightwgt)
             {
                 LeftControl = INITIAL_CONTROL_SPEED;
                 RightControl = INITIAL_CONTROL_SPEED;
