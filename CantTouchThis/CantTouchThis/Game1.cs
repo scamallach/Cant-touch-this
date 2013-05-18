@@ -16,6 +16,8 @@ namespace CantTouchThis
     /// </summary>
     public class Game1 : Game
     {
+        public static readonly Random r = new Random();
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Level currentLevel;
