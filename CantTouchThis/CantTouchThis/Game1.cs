@@ -108,9 +108,9 @@ namespace CantTouchThis
 
             currentLevel = new Level(tiles, obstacles, Content.Load<Texture2D>("RatCageFinal_small"), player, GraphicsDevice);
 
-            player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour"),
+            player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour2"),
                 Content.Load<Texture2D>(@"walk_back_colour"),
-                Content.Load<Texture2D>(@"wobble_front_colour2"),
+                Content.Load<Texture2D>(@"wobble front"),
                 Content.Load<Texture2D>(@"wobble back2"));
 
 
