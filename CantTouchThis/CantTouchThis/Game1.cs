@@ -53,8 +53,9 @@ namespace CantTouchThis
             /*player.setPos(
                 (graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
                 graphics.GraphicsDevice.Viewport.Height - player.Height); */
-            player.Position = new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
-                graphics.GraphicsDevice.Viewport.Height - player.Height);
+            player.Position = new Vector2(
+                (graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
+                720);
 
             base.Initialize();
         }
@@ -171,7 +172,11 @@ namespace CantTouchThis
                 if(!collision.HasValue)
                 {
                     player.Position += new Vector2(movementVector.X, 0);
-                    currentLevel.transform += new Vector2(0, movementVector.Y);
+
+                    if(player.Position.Y > (graphics.GraphicsDevice.Viewport.Height / 2))
+                        player.Position += new Vector2(0, movementVector.Y);
+                    else
+                        currentLevel.transform += new Vector2(0, movementVector.Y);
 
                     player.isMoving = (movementVector != Vector2.Zero);
 

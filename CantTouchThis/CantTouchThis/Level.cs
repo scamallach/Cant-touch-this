@@ -53,8 +53,22 @@ namespace CantTouchThis
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
         };
+        int[] obstacleLayer;
+        /*
         int[] obstacleLayer = new int[]
         {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,8 +86,30 @@ namespace CantTouchThis
             0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+            0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+            0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         };
+        */
 
         public Level(Texture2D[] tiles, Texture2D[] obstacles, Texture2D itemTexture, Player player, GraphicsDevice graphics)
         {
@@ -82,12 +118,13 @@ namespace CantTouchThis
             this.transform = Vector2.Zero;
             itemList = new List<Item>();
 
+            GenObstacleLayer();
+
             for (int i = 0; i < 10; i++)
-            {
                 SpawnItem(player, itemTexture, graphics.Viewport.Height);
-            }
 
             CalcInitialTransform();
+            
         }
 
         private void CalcInitialTransform()
@@ -127,11 +164,11 @@ namespace CantTouchThis
                 {
                     pos.X = tileWidth * (i % width);
                     pos.Y = (tileHeight * (float)(Math.Floor((double)i / width)))
-                        - (tiles[obstacleLayer[i] - 1].Height - tileHeight)
+                        - (obstacles[obstacleLayer[i] - 1].Height - tileHeight)
                         - transform.Y;
 
                     if (pos.Y >= topBoundary && pos.Y <= botBoundary)
-                        spriteBatch.Draw(this.tiles[obstacleLayer[i] - 1], pos, Color.White);
+                        spriteBatch.Draw(this.obstacles[obstacleLayer[i] - 1], pos, Color.White);
                 }
             }
 
@@ -143,11 +180,23 @@ namespace CantTouchThis
 
         private void GenObstacleLayer()
         {
+            int index;
+            bool addObstacle = false;
             this.obstacleLayer = new int[groundLayer.Length];
             for (int i = 0; i < groundLayer.Length; i++)
             {
+                addObstacle = Game1.r.Next(20) == 19;
+                if (i > 680)
+                    addObstacle = false;
 
+                if (addObstacle)
+                    index = Game1.r.Next(obstacles.Length) + 1;
+                else
+                    index = 0;
+
+                obstacleLayer[i] = index;
             }
+            System.Diagnostics.Debug.WriteLine(obstacleLayer.Length);
         }
 
         public Rectangle? CheckCollision(Rectangle playerRect)
@@ -161,9 +210,9 @@ namespace CantTouchThis
                 {
                     obstacleRect.X = tileWidth * (i % width);
                     obstacleRect.Y = (tileHeight * (int)(Math.Floor((double)i / width))) - (int)transform.Y
-                        - (tiles[obstacleLayer[i] - 1].Height - tileHeight);
-                    obstacleRect.Width = tiles[obstacleLayer[i] - 1].Width;
-                    obstacleRect.Height = tiles[obstacleLayer[i] - 1].Height;
+                        - (obstacles[obstacleLayer[i] - 1].Height - tileHeight);
+                    obstacleRect.Width = obstacles[obstacleLayer[i] - 1].Width;
+                    obstacleRect.Height = obstacles[obstacleLayer[i] - 1].Height;
 
                     if (playerRect.Intersects(obstacleRect))
                         return obstacleRect;
