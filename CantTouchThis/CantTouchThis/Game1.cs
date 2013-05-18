@@ -78,6 +78,7 @@ namespace CantTouchThis
                 Content.Load<Texture2D>(@"wobble front"),
                 Content.Load<Texture2D>(@"wobble back"));
 
+
             //walk = Content.Load<Texture2D>(@"walk_back_colour");
             //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
         }
@@ -117,7 +118,6 @@ namespace CantTouchThis
 
             if (currentState.IsConnected)
             {
-
                 // Update player's weight/speed balance
                 player.balancePlayer();
 
@@ -137,8 +137,6 @@ namespace CantTouchThis
                     if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
                     player.Position += movementVector * correctionRight;
                 }
-
-
 
 
                 /* Reset condition */

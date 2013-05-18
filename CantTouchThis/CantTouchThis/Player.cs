@@ -20,10 +20,8 @@ namespace CantTouchThis
         public int Width;
         public int Height;
 
-
         public List<Item> leftStack;
         public List<Item> rightStack;
-
 
         public float LeftControl { get; set; }
         public float RightControl { get; set; }
