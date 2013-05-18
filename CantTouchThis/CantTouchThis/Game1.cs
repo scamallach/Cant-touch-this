@@ -47,7 +47,9 @@ namespace CantTouchThis
             graphics.ApplyChanges();
 
             player = new Player(90, 95);//Explicitly set to prototype walk texture params
-            player.setPos(50, 50);
+            player.setPos(
+                (graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
+                graphics.GraphicsDevice.Viewport.Height - player.Height);
 
             base.Initialize();
         }
@@ -69,7 +71,7 @@ namespace CantTouchThis
                 Content.Load<Texture2D>(@"tile"),
                 Content.Load<Texture2D>(@"obstacle")
             };
-            currentLevel = new Level(tiles);
+            currentLevel = new Level(tiles, Content.Load<Texture2D>("RatCageFinal_small"), player, GraphicsDevice);
 
             walk = Content.Load<Texture2D>(@"gb_walk2");
         }
@@ -207,6 +209,13 @@ namespace CantTouchThis
             if (collision.HasValue)
             {
                 player.Position = lastPlayerPosition;
+            }
+
+            // Check for item collisions
+            Item itemCollision = currentLevel.CheckItemCollision(playerRect);
+            if (itemCollision != null)
+            {
+                player.AddItem(itemCollision);
             }
         }
 

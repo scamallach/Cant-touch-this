@@ -17,6 +17,13 @@ namespace CantTouchThis
         int tileWidth = 54;
         int tileHeight = 45;
 
+        public int LevelWidth { get { return width * tileWidth; } }
+        public int LevelHeight { get { return height * tileHeight; } }
+
+        public List<Item> itemList;
+
+        private Random random = new Random();
+
         int[] groundLayer = new int[]
         {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -40,25 +47,31 @@ namespace CantTouchThis
         {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0,
             0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0,
-            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+            0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0
         };
 
-        public Level(Texture2D[] tiles)
+        public Level(Texture2D[] tiles, Texture2D itemTexture, Player player, GraphicsDevice graphics)
         {
             this.tiles = tiles;
+            itemList = new List<Item>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                SpawnItem(player, itemTexture, graphics.Viewport.Height);
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -89,6 +102,11 @@ namespace CantTouchThis
                     spriteBatch.Draw(this.tiles[obstacleLayer[i] - 1], pos, Color.White);
                 }
             }
+
+            foreach(Item item in itemList)
+            {
+                item.Draw(spriteBatch, gameTime);
+            }
         }
 
         public Rectangle? CheckCollision(Rectangle playerRect)
@@ -112,6 +130,62 @@ namespace CantTouchThis
             }
 
             return result;
+        }
+
+        public Item CheckItemCollision(Rectangle playerRect)
+        {
+            Item result = null;
+
+            foreach (Item item in itemList)
+            {
+                if (item.CheckCollision(playerRect))
+                {
+                    result = item;
+                    break;
+                }
+            }
+
+            if (result != null)
+                itemList.Remove(result);
+
+            return result;
+        }
+
+        private int GetNewItemLocation(int maxYPosition, int screenHeight)
+        {
+            int maxYCol = maxYPosition / (screenHeight / height);
+            bool isEmpty = false;
+            int index = -1;
+
+            while (true)
+            {
+                index = random.Next(maxYCol * width);
+                isEmpty = obstacleLayer[index] == 0;
+                if (isEmpty)
+                    break;
+            }
+
+            return index;
+        }
+
+        public void SpawnItem(Player player, Texture2D texture, int screenHeight)
+        {
+            while (true)
+            {
+                int tileIndex = this.GetNewItemLocation((int)player.Position.Y, screenHeight);
+                Vector2 pos = new Vector2(
+                    (tileIndex % width) * tileWidth,
+                    (tileIndex / width) * tileHeight);
+
+                Rectangle? collision = CheckCollision(new Rectangle((int)pos.X, (int)pos.Y, texture.Width, texture.Height));
+                
+                if (!collision.HasValue)
+                {
+                    itemList.Add(new Item(texture, pos));
+                    break;
+                }
+            }
+            
         }
     }
 }

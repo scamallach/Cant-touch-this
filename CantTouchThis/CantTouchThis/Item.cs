@@ -12,6 +12,14 @@ namespace CantTouchThis
         Texture2D texture;
         public Vector2 position { get; set; }
 
+        public Rectangle GetBoundingBox 
+        { 
+            get 
+            { 
+                return new Rectangle((int)position.X, (int)position.Y, texture.Bounds.Width, texture.Bounds.Height); 
+            } 
+        }
+
         public Item(Texture2D texture, Vector2 position)
         {
             this.position = position;
@@ -25,6 +33,11 @@ namespace CantTouchThis
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
             spriteBatch.Draw(texture, position, Color.White);
+        }
+
+        public bool CheckCollision(Rectangle rect)
+        {
+            return rect.Intersects(this.GetBoundingBox);
         }
     }
 }
