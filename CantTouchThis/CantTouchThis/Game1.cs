@@ -64,6 +64,7 @@ namespace CantTouchThis
             // TODO: use this.Content to load your game content here
             tile = Content.Load<Texture2D>(@"tile");
             walk = Content.Load<Texture2D>(@"gb_walk2");
+
             currentLevel = new Level(tile);
         }
 
@@ -158,6 +159,7 @@ namespace CantTouchThis
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+
 
             //currentLevel.Draw(spriteBatch, gameTime);
             spriteBatch.Draw(walk, playerPosition, new Rectangle(5, 36, 90, 95), Color.White);
