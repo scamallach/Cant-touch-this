@@ -106,6 +106,9 @@ namespace CantTouchThis
             // Get the game pad state.
             GamePadState currentState = GamePad.GetState(PlayerIndex.One);
             KeyboardState keyboardState = Keyboard.GetState();
+
+            Vector2 lastPlayerPosition = new Vector2(playerPosition.X, playerPosition.Y);
+
             if (currentState.IsConnected)
             {
                 /* Ship velocity type controls 
@@ -173,6 +176,14 @@ namespace CantTouchThis
                     //modelVelocity = Vector3.Zero;
                     //modelRotation = 0.0f;
                 }
+            }
+
+            // Checl for collisions
+            Rectangle playerRect = new Rectangle((int)playerPosition.X, (int)playerPosition.Y, 90, 95);
+            Rectangle? collision = currentLevel.CheckCollision(playerRect);
+            if (collision.HasValue)
+            {
+                playerPosition = lastPlayerPosition;
             }
         }
 
