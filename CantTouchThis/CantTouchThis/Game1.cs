@@ -23,7 +23,6 @@ namespace CantTouchThis
         Level currentLevel;
 
         Texture2D tile;
-        Texture2D walk;
         Player player;
 
         bool invertYaxis = false;
@@ -50,9 +49,11 @@ namespace CantTouchThis
             
             graphics.ApplyChanges();
 
-            player = new Player(93, 80);//Explicitly set to prototype walk texture params
-            player.setPos(
+            player = new Player(95, 95);//Explicitly set to prototype walk texture params
+            /*player.setPos(
                 (graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
+                graphics.GraphicsDevice.Viewport.Height - player.Height); */
+            player.Position = new Vector2((graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
                 graphics.GraphicsDevice.Viewport.Height - player.Height);
 
             base.Initialize();
@@ -189,7 +190,10 @@ namespace CantTouchThis
                 if (player.Position.Y < 0) player.setPos(player.Position.X, 0);
                 if (player.Position.X > graphics.PreferredBackBufferWidth - player.Width) player.setPos(graphics.PreferredBackBufferWidth - player.Width, player.Position.Y);
                 if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
- 
+
+                /* Tell player they're moving */
+                player.RegisterMovement(gameTime);
+
             }
             /* Keyboard controls */
             else
@@ -203,6 +207,16 @@ namespace CantTouchThis
                 {
                     player.setPos(50, 50);
                 }
+
+
+                /* Check bounds */
+                if (player.Position.X < 0) player.setPos(0, player.Position.Y);
+                if (player.Position.Y < 0) player.setPos(player.Position.X, 0);
+                if (player.Position.X > graphics.PreferredBackBufferWidth - player.Width) player.setPos(graphics.PreferredBackBufferWidth - player.Width, player.Position.Y);
+                if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
+
+                /* Tell player they're moving */
+                player.RegisterMovement(gameTime);
             }
 
             
@@ -231,7 +245,8 @@ namespace CantTouchThis
             currentLevel.Draw(spriteBatch, gameTime);
 
             //TODO fix these sprite frame coords
-            spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+            player.Draw(spriteBatch, gameTime);
+            //spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
 
             spriteBatch.End();
 
