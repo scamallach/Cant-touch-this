@@ -25,9 +25,13 @@ namespace CantTouchThis
         Texture2D tile;
         Player player;
 
+        Texture2D lastSceneTexture;
+
         bool invertYaxis = false;
 
         public bool StartScreen { get; set; }
+
+        bool endScreen = false;
 
         public Game1()
             : base()
@@ -113,6 +117,8 @@ namespace CantTouchThis
                 Content.Load<Texture2D>(@"wobble front"),
                 Content.Load<Texture2D>(@"wobble back2"));
 
+            lastSceneTexture = Content.Load<Texture2D>(@"last scene");
+
 
             //walk = Content.Load<Texture2D>(@"walk_back_colour");
             //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
@@ -191,10 +197,14 @@ namespace CantTouchThis
                 {
                     player.Position += new Vector2(movementVector.X, 0);
 
-                    if(player.Position.Y > (graphics.GraphicsDevice.Viewport.Height / 2))
+                    if (player.Position.Y > (graphics.GraphicsDevice.Viewport.Height / 2))
                         player.Position += new Vector2(0, movementVector.Y);
                     else
+                    {
                         currentLevel.transform += new Vector2(0, movementVector.Y);
+                        if (currentLevel.transform.Y < -300)
+                            Win();
+                    }
                     //Apply vector for bounceback
 
                     currentLevel.transform += new Vector2(0, movementVector.Y);
@@ -272,21 +282,33 @@ namespace CantTouchThis
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            if (StartScreen)
-            { //draw startscreen
-                spriteBatch.Draw(stscreen, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+            if (endScreen)
+            {
+                spriteBatch.Draw(lastSceneTexture, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
             }
             else
             {
-                currentLevel.Draw(spriteBatch, gameTime);
+                if (StartScreen)
+                { //draw startscreen
+                    spriteBatch.Draw(stscreen, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                }
+                else
+                {
+                    currentLevel.Draw(spriteBatch, gameTime);
 
-                //TODO fix these sprite frame coords
-                player.Draw(spriteBatch, gameTime);
-                //spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+                    //TODO fix these sprite frame coords
+                    player.Draw(spriteBatch, gameTime);
+                    //spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+                }
             }
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        public void Win()
+        {
+            endScreen = true;
         }
     }
 }
