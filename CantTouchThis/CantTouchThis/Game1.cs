@@ -181,7 +181,10 @@ namespace CantTouchThis
                 if (player.Position.Y < 0) player.setPos(player.Position.X, 0);
                 if (player.Position.X > graphics.PreferredBackBufferWidth - player.Width) player.setPos(graphics.PreferredBackBufferWidth - player.Width, player.Position.Y);
                 if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
- 
+
+                /* Tell player they're moving */
+                player.RegisterMovement(gameTime);
+
             }
             /* Keyboard controls */
             else
@@ -195,6 +198,16 @@ namespace CantTouchThis
                 {
                     player.setPos(50, 50);
                 }
+
+
+                /* Check bounds */
+                if (player.Position.X < 0) player.setPos(0, player.Position.Y);
+                if (player.Position.Y < 0) player.setPos(player.Position.X, 0);
+                if (player.Position.X > graphics.PreferredBackBufferWidth - player.Width) player.setPos(graphics.PreferredBackBufferWidth - player.Width, player.Position.Y);
+                if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
+
+                /* Tell player they're moving */
+                player.RegisterMovement(gameTime);
             }
 
             // Check for collisions
@@ -226,7 +239,8 @@ namespace CantTouchThis
             currentLevel.Draw(spriteBatch, gameTime);
 
             //TODO fix these sprite frame coords
-            spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+            player.Draw(spriteBatch, gameTime);
+            //spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
 
             spriteBatch.End();
 

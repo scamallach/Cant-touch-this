@@ -13,7 +13,20 @@ namespace CantTouchThis
         public static float MIN_CONTROL_SPEED = 0.1f;
         public static float MAX_CONTROL_SPEED = 0.4f;
 
-        public Vector2 Position { get; set; }
+        public static int WOBBLE_DURATION = 1000;
+
+        //TODO Fix initial null
+        private Vector2 _Position;
+        public Vector2 Position
+        {
+            get { return this._Position; }
+            set
+            {
+                LastPlayerPosition = this._Position;
+                this._Position = value;
+            }
+        }
+        public Vector2 LastPlayerPosition { get; protected set; }
 
         public float Velocity { get; set; }
         public float Direction { get; set; }
@@ -32,6 +45,21 @@ namespace CantTouchThis
         protected Texture2D FrontWobble { get; set; }
         protected Texture2D BackWobble { get; set; }
 
+        protected int MaxFrames { get; set; }
+        private int _CurrentFrame;
+        protected int CurrentFrame
+        {
+            get { return this._CurrentFrame; }
+            set
+            {
+                if (CurrentFrame == (MaxFrames-1)) this._CurrentFrame = 0; else { this._CurrentFrame = value; }
+            }
+        }
+        
+        
+        protected bool refreshIntervalPassed = false;
+        protected int refreshInterval { get; set; }
+        protected int wobbleTimeout { get; set; }
 
         public Player(int width, int height)
         {
@@ -42,6 +70,8 @@ namespace CantTouchThis
 
             leftStack = new List<Item>();
             rightStack = new List<Item>();
+            CurrentFrame = 0;
+            MaxFrames = 6;
         }
 
         public void LoadContent(Texture2D frontWalk, Texture2D backWalk, Texture2D frontWobble, Texture2D backWobble )
@@ -52,6 +82,48 @@ namespace CantTouchThis
             BackWobble = backWobble;
 
             CurrentWalk = FrontWalk;
+        }
+
+        public void RegisterMovement(GameTime gameTime)
+        {
+            Vector2 diff = LastPlayerPosition - Position;
+            if (diff != Vector2.Zero)
+            {
+                refreshInterval += gameTime.ElapsedGameTime.Milliseconds;
+                //TODO and check what direction player is facing, modify Walk
+            }
+        }
+
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
+            //refreshInterval += gameTime.ElapsedGameTime.Milliseconds; //Now done elsewhere
+            if (refreshInterval > 300)
+            {
+                refreshInterval = 0;
+                refreshIntervalPassed = true;
+            }
+
+            if (refreshIntervalPassed)
+            {
+                CurrentFrame++;
+                if (wobbleTimeout <= 0)
+                {
+                    if (CurrentWalk == FrontWobble) CurrentWalk = FrontWalk;
+                    if (CurrentWalk == BackWobble) CurrentWalk = BackWalk; 
+                }
+            }
+            refreshIntervalPassed = false;
+
+            spriteBatch.Draw(CurrentWalk, Position, 
+                new Rectangle(CurrentFrame*Width, 36, Width, Height), 
+                Color.White);
+        }
+
+        public void causeWobble()
+        {
+            if (CurrentWalk == FrontWalk) CurrentWalk = FrontWobble;
+            if (CurrentWalk == BackWalk) CurrentWalk = BackWobble;
+            wobbleTimeout = WOBBLE_DURATION;
         }
 
         public void setPos(float x, float y) {
