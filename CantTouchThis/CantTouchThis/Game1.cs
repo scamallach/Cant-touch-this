@@ -33,6 +33,8 @@ namespace CantTouchThis
 
         bool endScreen = false;
 
+        public SpriteFont Font { get; set; }
+
         public Game1()
             : base()
         {
@@ -119,6 +121,7 @@ namespace CantTouchThis
 
             lastSceneTexture = Content.Load<Texture2D>(@"last scene");
 
+            Font = Content.Load<SpriteFont>("SpriteFont1");
 
             //walk = Content.Load<Texture2D>(@"walk_back_colour");
             //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
@@ -285,6 +288,12 @@ namespace CantTouchThis
             if (endScreen)
             {
                 spriteBatch.Draw(lastSceneTexture, new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), Color.White);
+                // Draw the Score in the top-left of screen
+                spriteBatch.DrawString(
+                    Font,                          // SpriteFont
+                    "Score: " + (player.leftStack.Count + player.rightStack.Count).ToString(),  // Text
+                    new Vector2(500, 350),                      // Position
+                    Color.White);  
             }
             else
             {
