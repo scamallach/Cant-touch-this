@@ -229,14 +229,19 @@ namespace CantTouchThis
                 if (leftwgt >= rightwgt)
                 {
                     LeftControl = INITIAL_CONTROL_SPEED + difference;
-                    RightControl = INITIAL_CONTROL_SPEED - difference + MIN_CONTROL_SPEED;
+                    RightControl = (INITIAL_CONTROL_SPEED - difference) + MIN_CONTROL_SPEED;
                 }
                 else
                 {
-                    LeftControl = INITIAL_CONTROL_SPEED - difference + MIN_CONTROL_SPEED;
+                    LeftControl = (INITIAL_CONTROL_SPEED - difference) + MIN_CONTROL_SPEED;
                     RightControl = INITIAL_CONTROL_SPEED + difference;
                 }
+
+                //Quickfix on feedback that he moves too fast
+                LeftControl = (float)(LeftControl * 0.7);
+                RightControl = (float)(RightControl * 0.7);
             }
+
 
         }
 
