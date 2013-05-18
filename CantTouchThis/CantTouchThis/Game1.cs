@@ -41,12 +41,14 @@ namespace CantTouchThis
         /// </summary>
         protected override void Initialize()
         {
+            this.IsFixedTimeStep = false;
+            
             graphics.PreferredBackBufferWidth = 1080;
             graphics.PreferredBackBufferHeight = 720;
             
             graphics.ApplyChanges();
 
-            player = new Player(90, 95);//Explicitly set to prototype walk texture params
+            player = new Player(93, 80);//Explicitly set to prototype walk texture params
             player.setPos(
                 (graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
                 graphics.GraphicsDevice.Viewport.Height - player.Height);
@@ -73,7 +75,14 @@ namespace CantTouchThis
             };
             currentLevel = new Level(tiles, Content.Load<Texture2D>("RatCageFinal_small"), player, GraphicsDevice);
 
-            walk = Content.Load<Texture2D>(@"gb_walk2");
+            player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour"),
+                Content.Load<Texture2D>(@"walk_back_colour"),
+                Content.Load<Texture2D>(@"wobble front"),
+                Content.Load<Texture2D>(@"wobble back"));
+
+
+            //walk = Content.Load<Texture2D>(@"walk_back_colour");
+            //walkFront = Content.Load<Texture2D>(@"walk_front_colour");
         }
 
         /// <summary>
@@ -96,12 +105,12 @@ namespace CantTouchThis
                 Exit();
 
             // Read in input from controller
-            UpdateInput();
+            UpdateInput(gameTime);
 
             base.Update(gameTime);
         }
 
-        protected void UpdateInput()
+        protected void UpdateInput(GameTime gameTime)
         {
             // Get the game pad state.
             GamePadState currentState = GamePad.GetState(PlayerIndex.One);
@@ -111,76 +120,33 @@ namespace CantTouchThis
 
             if (currentState.IsConnected)
             {
-                /* Ship velocity type controls 
-                // Rotate the model using the left thumbstick, and scale it down
-                modelRotation -= currentState.ThumbSticks.Left.X * 0.10f;
+                // Update player's weight/speed balance
+                player.balancePlayer();
 
-                // Create some velocity if the right trigger is down.
-                Vector3 modelVelocityAdd = Vector3.Zero;
+                // Seed input controls with current weight/speed balance
+                float correctionLeft = player.LeftControl * gameTime.ElapsedGameTime.Milliseconds;
+                float correctionRight = player.RightControl * gameTime.ElapsedGameTime.Milliseconds;
 
-                // Find out what direction we should be thrusting, 
-                // using rotation.
-                modelVelocityAdd.X = -(float)Math.Sin(modelRotation);
-                modelVelocityAdd.Z = -(float)Math.Cos(modelRotation);
-
-                // Now scale our direction by how hard the trigger is down.
-                modelVelocityAdd *= currentState.Triggers.Right;
-
-                // Finally, add this vector to our velocity.
-                modelVelocity += modelVelocityAdd;
-                */
-
-                
-
-                // MOVEMENT PROFILES
-                // Binary
-                // NEXT Summation
-                /*
-                float maxSpeed = 0.1f;
-                float changeInAngle = currentState.ThumbSticks.Left.X * maxSpeed;
-
-                //player.Direction += changeInAngle;
-
-
-                Vector2 direction = new Vector2((float)Math.Cos(changeInAngle),
-                                (float)Math.Sin(changeInAngle));
-                direction.Normalize();
-                player.Position += direction * maxSpeed;
-                */
-
-                // Weighted
-                /*// Explicit stepped
-                if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
-                if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
-                if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
-                if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
-                */
-                // Acceleration stepped
-                if (currentState.ThumbSticks.Left.X < 0) player.setPos(player.Position.X - 5, player.Position.Y);
-                if (currentState.ThumbSticks.Left.X > 0) player.setPos(player.Position.X + 5, player.Position.Y);
-
-                if (currentState.ThumbSticks.Left.Y < 0) player.setPos(player.Position.X, player.Position.Y + 5);
-                if (currentState.ThumbSticks.Left.Y > 0) player.setPos(player.Position.X, player.Position.Y - 5);
-                
-
-                // END MOVEMENT PROFILES
-
-                /*
-                // Set vibration feedback
-                GamePad.SetVibration(PlayerIndex.One,
-                    1.0f, 1.0f);
-                    //currentState.Triggers.Right,
-                    //currentState.Triggers.Right);
-                */
+                if (currentState.ThumbSticks.Left != Vector2.Zero)
+                {
+                    Vector2 movementVector = currentState.ThumbSticks.Left;
+                    if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
+                    player.Position += movementVector * correctionLeft;
+                }
+                if (currentState.ThumbSticks.Right != Vector2.Zero)
+                {
+                    Vector2 movementVector = currentState.ThumbSticks.Right;
+                    if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
+                    player.Position += movementVector * correctionRight;
+                }
 
 
                 /* Reset condition */
                 // Warp back to start with the A button
                 if (currentState.Buttons.A == ButtonState.Pressed)
                 {
-                    player.setPos(50, 50);// Vector2.Zero;
-                    //modelVelocity = Vector3.Zero;
-                    //modelRotation = 0.0f;
+                    player.setPos(50, 50);
+
                 }
 
                 /* Check bounds */
@@ -190,6 +156,7 @@ namespace CantTouchThis
                 if (player.Position.Y > graphics.PreferredBackBufferHeight - player.Height) player.setPos(player.Position.X, graphics.PreferredBackBufferHeight - player.Height);
  
             }
+            /* Keyboard controls */
             else
             {
                 if (keyboardState.IsKeyDown(Keys.Left)) player.setPos(player.Position.X - 5, player.Position.Y);
@@ -227,12 +194,12 @@ namespace CantTouchThis
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
 
             currentLevel.Draw(spriteBatch, gameTime);
 
-            spriteBatch.Draw(walk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
+            //TODO fix these sprite frame coords
+            spriteBatch.Draw(player.CurrentWalk, player.Position, new Rectangle(5, 36, 90, 95), Color.White);
 
             spriteBatch.End();
 
