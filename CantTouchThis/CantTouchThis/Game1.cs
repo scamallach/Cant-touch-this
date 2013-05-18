@@ -75,7 +75,31 @@ namespace CantTouchThis
                 Content.Load<Texture2D>(@"tile"),
                 Content.Load<Texture2D>(@"obstacle")
             };
-            currentLevel = new Level(tiles, Content.Load<Texture2D>("RatCageFinal_small"), player, GraphicsDevice);
+
+            Texture2D[] obstacles = new Texture2D[]
+            {
+                Content.Load<Texture2D>("BeakerFinal"),
+                Content.Load<Texture2D>("BlueChairBackFinal"),
+                Content.Load<Texture2D>("BlueChairFrontFinal"),
+                Content.Load<Texture2D>("BlueChairSideFinal"),
+                Content.Load<Texture2D>("BlueChairSideFlipFinal"),
+                Content.Load<Texture2D>("ColumnFinal"),
+                Content.Load<Texture2D>(@"Desk type 1Final"),
+                Content.Load<Texture2D>(@"Desk type 2Final"),
+                Content.Load<Texture2D>(@"Desk type 2sideFinal"),
+                Content.Load<Texture2D>("GreenChairBackFinal"),
+                Content.Load<Texture2D>("GreenChairFrontFinal"),
+                Content.Load<Texture2D>("GreenChairSideFinal"),
+                Content.Load<Texture2D>("GreenChairSideFlipFinal"),
+                Content.Load<Texture2D>("PilarFinal"),
+                Content.Load<Texture2D>("PinkChairBackFinal"),
+                Content.Load<Texture2D>("PinkChairFrontFinal"),
+                Content.Load<Texture2D>("PinkChairSideFinal"),
+                Content.Load<Texture2D>("PinkChairSideFlipFinal")
+            };
+
+
+            currentLevel = new Level(tiles, obstacles, Content.Load<Texture2D>("RatCageFinal_small"), player, GraphicsDevice);
 
             player.LoadContent(Content.Load<Texture2D>(@"walk_front_colour"),
                 Content.Load<Texture2D>(@"walk_back_colour"),

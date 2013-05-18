@@ -12,6 +12,7 @@ namespace CantTouchThis
     public class Level
     {
         Texture2D[] tiles;
+        Texture2D[] obstacles;
         int width = 20;
         int height = 16;
         int tileWidth = 54;
@@ -63,15 +64,18 @@ namespace CantTouchThis
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0
         };
 
-        public Level(Texture2D[] tiles, Texture2D itemTexture, Player player, GraphicsDevice graphics)
+        public Level(Texture2D[] tiles, Texture2D[] obstacles, Texture2D itemTexture, Player player, GraphicsDevice graphics)
         {
             this.tiles = tiles;
+            this.obstacles = obstacles;
             itemList = new List<Item>();
 
             for (int i = 0; i < 10; i++)
             {
                 SpawnItem(player, itemTexture, graphics.Viewport.Height);
             }
+
+            
         }
 
         public void Update(GameTime gameTime)
@@ -106,6 +110,15 @@ namespace CantTouchThis
             foreach(Item item in itemList)
             {
                 item.Draw(spriteBatch, gameTime);
+            }
+        }
+
+        private void GenObstacleLayer()
+        {
+            this.obstacleLayer = new int[groundLayer.Length];
+            for (int i = 0; i < groundLayer.Length; i++)
+            {
+
             }
         }
 
