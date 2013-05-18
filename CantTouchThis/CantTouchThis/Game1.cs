@@ -49,8 +49,7 @@ namespace CantTouchThis
             
             graphics.ApplyChanges();
 
-            player = new Player(93, 80);//Explicitly set to prototype walk texture params
-            player.setPos(
+            player = new Player(95, 95);//Explicitly set to prototype walk texture params
                 (graphics.GraphicsDevice.Viewport.Width / 2) + (player.Width / 2) , 
                 graphics.GraphicsDevice.Viewport.Height - player.Height);
 
