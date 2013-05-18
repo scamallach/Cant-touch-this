@@ -23,7 +23,6 @@ namespace CantTouchThis
         Level currentLevel;
 
         Texture2D tile;
-        Texture2D walk;
         Player player;
 
         bool invertYaxis = false;
