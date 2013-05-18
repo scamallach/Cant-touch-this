@@ -25,8 +25,19 @@ namespace CantTouchThis
 
         private Random random = new Random();
 
+        public Vector2 transform { get; set; }
+
         int[] groundLayer = new int[]
         {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -68,6 +79,7 @@ namespace CantTouchThis
         {
             this.tiles = tiles;
             this.obstacles = obstacles;
+            this.transform = Vector2.Zero;
             itemList = new List<Item>();
 
             for (int i = 0; i < 10; i++)
@@ -75,7 +87,14 @@ namespace CantTouchThis
                 SpawnItem(player, itemTexture, graphics.Viewport.Height);
             }
 
-            
+            CalcInitialTransform();
+        }
+
+        private void CalcInitialTransform()
+        {
+            int rows = groundLayer.Length / width;
+
+            transform = new Vector2(0, (rows - height) * tileHeight);
         }
 
         public void Update(GameTime gameTime)
@@ -86,13 +105,19 @@ namespace CantTouchThis
         {
             Vector2 pos = Vector2.Zero;
 
+            int topBoundary = 0 - tileHeight;
+            int botBoundary = ((height * tileHeight) - tileHeight) + tileHeight;
+
             for (int i = 0; i < groundLayer.Length; i++)
             {
                 if (groundLayer[i] > 0)
                 {
                     pos.X = tileWidth * (i % width);
-                    pos.Y = tileHeight * (float)(Math.Floor((double)i / width));
-                    spriteBatch.Draw(this.tiles[groundLayer[i] - 1], pos, Color.White);
+                    pos.Y = tileHeight * (float)(Math.Floor((double)i / width))
+                        - transform.Y;
+
+                    if (pos.Y >= topBoundary && pos.Y <= botBoundary)
+                        spriteBatch.Draw(this.tiles[groundLayer[i] - 1], pos, Color.White);
                 }
             }
 
@@ -102,14 +127,17 @@ namespace CantTouchThis
                 {
                     pos.X = tileWidth * (i % width);
                     pos.Y = (tileHeight * (float)(Math.Floor((double)i / width)))
-                        - (tiles[obstacleLayer[i] - 1].Height - tileHeight);
-                    spriteBatch.Draw(this.tiles[obstacleLayer[i] - 1], pos, Color.White);
+                        - (tiles[obstacleLayer[i] - 1].Height - tileHeight)
+                        - transform.Y;
+
+                    if (pos.Y >= topBoundary && pos.Y <= botBoundary)
+                        spriteBatch.Draw(this.tiles[obstacleLayer[i] - 1], pos, Color.White);
                 }
             }
 
             foreach(Item item in itemList)
             {
-                item.Draw(spriteBatch, gameTime);
+                item.Draw(spriteBatch, transform, topBoundary, botBoundary, gameTime);
             }
         }
 
@@ -132,7 +160,7 @@ namespace CantTouchThis
                 if (obstacleLayer[i] > 0)
                 {
                     obstacleRect.X = tileWidth * (i % width);
-                    obstacleRect.Y = (tileHeight * (int)(Math.Floor((double)i / width)))
+                    obstacleRect.Y = (tileHeight * (int)(Math.Floor((double)i / width))) - (int)transform.Y
                         - (tiles[obstacleLayer[i] - 1].Height - tileHeight);
                     obstacleRect.Width = tiles[obstacleLayer[i] - 1].Width;
                     obstacleRect.Height = tiles[obstacleLayer[i] - 1].Height;
@@ -151,7 +179,7 @@ namespace CantTouchThis
 
             foreach (Item item in itemList)
             {
-                if (item.CheckCollision(playerRect))
+                if (item.CheckCollision(playerRect, transform))
                 {
                     result = item;
                     break;
@@ -164,15 +192,14 @@ namespace CantTouchThis
             return result;
         }
 
-        private int GetNewItemLocation(int maxYPosition, int screenHeight)
+        private int GetNewItemLocation()
         {
-            int maxYCol = maxYPosition / (screenHeight / height);
             bool isEmpty = false;
             int index = -1;
 
             while (true)
             {
-                index = random.Next(maxYCol * width);
+                index = random.Next(obstacleLayer.Length);
                 isEmpty = obstacleLayer[index] == 0;
                 if (isEmpty)
                     break;
@@ -185,7 +212,7 @@ namespace CantTouchThis
         {
             while (true)
             {
-                int tileIndex = this.GetNewItemLocation((int)player.Position.Y, screenHeight);
+                int tileIndex = this.GetNewItemLocation();
                 Vector2 pos = new Vector2(
                     (tileIndex % width) * tileWidth,
                     (tileIndex / width) * tileHeight);
@@ -194,6 +221,7 @@ namespace CantTouchThis
                 
                 if (!collision.HasValue)
                 {
+                    pos -= transform;
                     itemList.Add(new Item(texture, pos));
                     break;
                 }

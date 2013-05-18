@@ -30,14 +30,24 @@ namespace CantTouchThis
         {
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch, Vector2 transform, int topBoundary, int botBoundary, GameTime gameTime)
         {
-            spriteBatch.Draw(texture, position, Color.White);
+            Vector2 pos = position - transform;
+
+            if (pos.Y >= topBoundary && pos.Y <= botBoundary)
+            {
+                spriteBatch.Draw(texture, pos, Color.White);
+            }
         }
 
-        public bool CheckCollision(Rectangle rect)
+        public bool CheckCollision(Rectangle rect, Vector2 transform)
         {
-            return rect.Intersects(this.GetBoundingBox);
+            Rectangle temp = new Rectangle(
+                this.GetBoundingBox.X, 
+                this.GetBoundingBox.Y - (int)transform.Y, 
+                this.GetBoundingBox.Width, 
+                this.GetBoundingBox.Height);
+            return rect.Intersects(temp);
         }
     }
 }

@@ -153,18 +153,27 @@ namespace CantTouchThis
                 float correctionLeft = player.LeftControl * gameTime.ElapsedGameTime.Milliseconds;
                 float correctionRight = player.RightControl * gameTime.ElapsedGameTime.Milliseconds;
 
+                Vector2 movementVector = Vector2.Zero;
                 if (currentState.ThumbSticks.Left != Vector2.Zero)
-                {
-                    Vector2 movementVector = currentState.ThumbSticks.Left;
-                    if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
-                    player.Position += movementVector * correctionLeft;
-                }
+                    movementVector = currentState.ThumbSticks.Left * correctionLeft;
+
                 if (currentState.ThumbSticks.Right != Vector2.Zero)
+                    movementVector += currentState.ThumbSticks.Right * correctionRight;
+
+                if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
+
+                // Check for collisions
+                Vector2 newPos = player.Position + movementVector;
+                Rectangle playerRect = new Rectangle((int)newPos.X, (int)newPos.Y, 93, 80);
+                Rectangle? collision = currentLevel.CheckCollision(playerRect);
+
+                if(!collision.HasValue)
                 {
-                    Vector2 movementVector = currentState.ThumbSticks.Right;
-                    if (!invertYaxis) movementVector.Y *= -1; // Y-Axis is inverted by default, correct if necessary
-                    player.Position += movementVector * correctionRight;
+                    player.Position += new Vector2(movementVector.X, 0);
+                    currentLevel.transform += new Vector2(0, movementVector.Y);
                 }
+
+                HandleItemCollisions(playerRect);
 
 
                 /* Reset condition */
@@ -196,14 +205,11 @@ namespace CantTouchThis
                 }
             }
 
-            // Check for collisions
-            Rectangle playerRect = new Rectangle((int)player.Position.X, (int)player.Position.Y, 90, 95);
-            Rectangle? collision = currentLevel.CheckCollision(playerRect);
-            if (collision.HasValue)
-            {
-                player.Position = lastPlayerPosition;
-            }
+            
+        }
 
+        private void HandleItemCollisions(Rectangle playerRect)
+        {
             // Check for item collisions
             Item itemCollision = currentLevel.CheckItemCollision(playerRect);
             if (itemCollision != null)
